@@ -1,6 +1,10 @@
 package App;
 
 import javax.management.NotificationEmitter;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,46 +13,122 @@ public class Graph {
     private Map<Vetex,Boolean> isColored = new HashMap<>() ;
     private Map<Vetex,List<Vetex>> adjustList = new HashMap<>() ;
     private int totalOfSubject  ;
+    private Map<String, Vetex> mapAllVetex = new HashMap<>() ;
 
-    public Graph(){
+    public Graph() throws IOException {
         System.out.println("default constructor");
+
     }
+
+
+
+
+    public void initGraphFromTheFiles(String studentPath,String allSubjectsPath) throws IOException {
+
+
+
+
+           // init Vetex
+//            Set<String> allSubjects = new HashSet<>();
+//            students.stream().forEach(student -> {
+//                allSubjects.addAll(student.getSubjects());
+//            });
+//
+//            allSubjects.stream().forEach(subject -> allVetexs.add(new Vetex(subject)));
+
+
+        Path subjectsPath = Paths.get(allSubjectsPath);
+        List<String> subjectLines = Files.readAllLines(subjectsPath);
+
+
+
+        subjectLines.stream().forEach(subjectLine -> {
+//
+          mapAllVetex.put(subjectLine,new Vetex(subjectLine));
+
+        });
+
+        // init total
+        totalOfSubject = mapAllVetex.size();
+
+
+        // init all Student
+
+        Path stdPath = Paths.get(studentPath);
+        List<String> studentsLines = Files.readAllLines(stdPath);
+        List<Student> students = new ArrayList<>();
+
+
+        studentsLines.stream().forEach(line -> {
+            String name = line.split(":")[0];
+            List<String> subjects = Arrays.asList(line.split(":")[1].split(","));
+            List<Vetex> subjectOfStudent = new ArrayList<>();
+            subjects.stream().forEach(str -> subjectOfStudent.add(mapAllVetex.get(str)));
+            students.add(new Student(name,subjectOfStudent));
+        });
+//        students.stream().forEach(student -> System.out.println(student));
+
+
+            this.isColored = this.mapAllVetex.entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toMap(vetex -> vetex , vetex -> false));
+
+
+            // init adjustList
+
+            mapAllVetex.values().stream().forEach(vetex -> {
+                System.out.println(vetex);
+                Set<Vetex> conflictVetex = new HashSet<>();
+                students.stream().filter(student -> {
+//                   System.out.println(student);
+                   return student.getSubjects().contains(vetex);
+               }).forEach(student -> conflictVetex.addAll(student.getSubjects()));
+                List<Vetex> incommingCoflict = new ArrayList<>(conflictVetex).stream().filter(vetexCurr -> !vetexCurr.equals(vetex)).collect(Collectors.toList());
+                adjustList.put(vetex,incommingCoflict);
+//                System.out.print(vetex+" --> " +incommingCoflict);
+//                System.out.println();
+            });
+
+
+    }
+
+
+
+
 
     public void coloring(){
 
-        Vetex MATH101 = new Vetex("MATH101");
-        Vetex CSE100 = new Vetex("CSE100");
-        Vetex MATH259 = new Vetex("MATH259");
-        Vetex BLAW203 = new Vetex("BLAW203");
-        Vetex STAT253 = new Vetex("STAT253");
-        Vetex HIST111 = new Vetex("HIST111");
-
-        isColored.put(MATH101,false);
-        isColored.put(CSE100,false);
-        isColored.put(MATH259,false);
-        isColored.put(BLAW203,false);
-        isColored.put(STAT253,false);
-        isColored.put(HIST111,false);
-
-
-
-
-
-        totalOfSubject = 6 ;
-
-        adjustList.put(MATH101,List.of(BLAW203,CSE100,MATH259));
-        adjustList.put(BLAW203,List.of(MATH101));
-        adjustList.put(CSE100,List.of(MATH101,MATH259));
-        adjustList.put(HIST111,List.of(MATH259,STAT253));
-        adjustList.put(MATH259,List.of(CSE100,HIST111,MATH101,STAT253));
-        adjustList.put(STAT253,List.of(HIST111,MATH259));
+//        Vetex MATH101 = new Vetex("MATH101");
+//        Vetex CSE100 = new Vetex("CSE100");
+//        Vetex MATH259 = new Vetex("MATH259");
+//        Vetex BLAW203 = new Vetex("BLAW203");
+//        Vetex STAT253 = new Vetex("STAT253");
+//        Vetex HIST111 = new Vetex("HIST111");
+//
+//        isColored.put(MATH101,false);
+//        isColored.put(CSE100,false);
+//        isColored.put(MATH259,false);
+//        isColored.put(BLAW203,false);
+//        isColored.put(STAT253,false);
+//        isColored.put(HIST111,false);
 
 
 
 
 
+//        totalOfSubject = 6 ;
 
-        adjustList.entrySet().stream().forEach(entryVetex -> {
+//        adjustList.put(MATH101,List.of(BLAW203,HIST111,MATH259));
+//        adjustList.put(BLAW203,List.of(MATH101,STAT253,CSE100));
+//        adjustList.put(CSE100,List.of(MATH101,MATH259));
+//        adjustList.put(HIST111,List.of(CSE100,MATH101));
+//        adjustList.put(MATH259,List.of(CSE100,HIST111,MATH101,STAT253));
+//        adjustList.put(STAT253,List.of(HIST111,MATH259,BLAW203));
+
+
+
+
+
+        // print adjust List
+        this.adjustList.entrySet().stream().forEach(entryVetex -> {
             System.out.print(entryVetex.getKey()+"--");
             List<Vetex> conflictVetex = entryVetex.getValue();
             conflictVetex.stream().forEach( vetex -> System.out.print(vetex+" "));
@@ -114,11 +194,25 @@ public class Graph {
 
 
     public void printResult(){
+
         this.result.entrySet().stream().forEach(entry -> {
             System.out.print(entry.getKey() + " -----");
             entry.getValue().stream().forEach(entryVetex -> System.out.print(entryVetex+"  "));
             System.out.println();
         });
+    }
+
+
+    public void saveResultIntoFile(String fileSave) throws IOException {
+        List<String> resultSave = new ArrayList<>();
+
+        this.result.entrySet().stream().forEach(entry -> {
+            StringBuilder sb = new StringBuilder();
+            sb.append(entry.getKey() + " -----");
+            entry.getValue().stream().forEach(entryVetex -> sb.append(entryVetex+"  "));
+            resultSave.add(sb.toString());
+        });
+        Files.write(Paths.get(fileSave),resultSave, StandardOpenOption.APPEND);
     }
 
 

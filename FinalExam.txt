@@ -1,0 +1,5 @@
+1 -----Vetex{name='BLAW203'}  Vetex{name='HIST111'}  
+2 -----Vetex{name='CSE100'}  
+3 -----Vetex{name='MATH101'}  
+4 -----Vetex{name='MATH259'}  
+5 -----Vetex{name='STAT253'}  

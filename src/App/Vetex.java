@@ -13,7 +13,7 @@ public class Vetex implements Comparable<Vetex> {
 
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
 
