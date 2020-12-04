@@ -34,4 +34,11 @@ public class Vetex implements Comparable<Vetex> {
     public int hashCode() {
         return Objects.hash(name);
     }
+
+    @Override
+    public String toString() {
+        return "Vetex{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }
