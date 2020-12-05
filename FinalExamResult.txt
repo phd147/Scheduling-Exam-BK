@@ -1,0 +1,6 @@
+1 -----Vertex{name='AI'}  Vertex{name='GIAITICH'}  
+2 -----Vertex{name='HINHHOA'}  Vertex{name='JAVA'}  
+3 -----Vertex{name='KTMT'}  Vertex{name='TINDC'}  
+1 -----Vertex{name='AI'}  Vertex{name='GIAITICH'}  
+2 -----Vertex{name='HINHHOA'}  Vertex{name='JAVA'}  
+3 -----Vertex{name='KTMT'}  Vertex{name='TINDC'}  

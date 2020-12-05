@@ -1,10 +1,8 @@
 package App;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
 public class Graph {
 
     private Map<Integer, List<Vertex>> result = new HashMap<>();
@@ -12,27 +10,18 @@ public class Graph {
     private Map<Vertex,List<Vertex>> adjustList = new HashMap<>() ;
     private int totalOfSubject  ;
     private Map<String, Vertex> mapAllVetex = new HashMap<>() ;
-
     static  int studentCount = 0 ;
     static int subjectCount = 0 ;
 
     public Graph() throws IOException {
-        System.out.println("default constructor");
+
 
     }
-
-
-
     // Khởi tạo đồ thi Graph bằng cách đọc file và xử lí logic
     public void initGraphFromTheFiles(String studentPath,String allSubjectsPath) throws IOException {
-
-
-
         // Đọc file và  Set giá trị cho thuộc tính các môn theo cấu trúc dữ liệu hashTable ( cụ thể ở đây là HashMap trong java )
-
         Path subjectsPath = Paths.get(allSubjectsPath);
         List<String> subjectLines = Files.readAllLines(subjectsPath);
-
 
         subjectLines.stream().forEach(subjectLine -> {
             if(subjectCount >=1){
@@ -41,21 +30,22 @@ public class Graph {
             subjectCount ++ ;
 
         });
+        System.out.println("-----DANH SÁCH CÁC MÔN THI-----");
+        mapAllVetex.entrySet().stream().forEach(entryVetex -> System.out.println(entryVetex.getValue().getName()) );
+
 
         // Set giá trị cho thuộc tính tổng các đỉnh (MÔN)
         totalOfSubject = mapAllVetex.size();
 
 
         // Đọc file và  Set giá trị cho thuộc tính thông tin sinh viên theo cấu trúc dữ liệu đối tượng Student
-
         Path stdPath = Paths.get(studentPath);
         List<String> studentsLines = Files.readAllLines(stdPath);
         List<Student> students = new ArrayList<>();
 
-
         studentsLines.stream().forEach(line -> {
             if(studentCount >= 1){
-                System.out.println(line);
+
                 String name = line.split(":")[0];
                 List<String> subjects = Arrays.asList(line.split(":")[1].split(","));
                 List<Vertex> subjectOfStudent = new ArrayList<>();
@@ -65,48 +55,49 @@ public class Graph {
             studentCount ++ ;
 
         });
-//        students.stream().forEach(student -> System.out.println(student));
-
+        System.out.println("------------------------");
+        System.out.println("DANH SÁCH SINH VIÊN VÀ MÔN THI CỦA SINH VIÊN ĐÓ");
+        students.stream().forEach(student -> {
+            System.out.print(student.getName() + " : ");
+            student.getSubjects().stream().forEach(subject -> System.out.print(subject.getName()+" "));
+            System.out.println();
+        });
 
             this.isColored = this.mapAllVetex.entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toMap(vertex -> vertex, vertex -> false));
 
-
             // Khởi tạo thuộc tính bảng băm hash table ( cụ thể ở đây là hashMap<>()) cho đồ thị , có key là đỉnh và value là danh sách các đỉnh không được kề đỉnh đó
             mapAllVetex.values().stream().forEach(vertex -> {
-                System.out.println(vertex);
+//                System.out.println(vertex);
                 Set<Vertex> conflictVertices = new HashSet<>();
                 students.stream().filter(student -> student.getSubjects().contains(vertex)).forEach(student -> conflictVertices.addAll(student.getSubjects()));
                 List<Vertex> incommingCoflict = new ArrayList<>(conflictVertices).stream().filter(vertexCurr -> !vertexCurr.equals(vertex)).collect(Collectors.toList());
                 adjustList.put(vertex,incommingCoflict);
-
             });
-
+        System.out.println("--------------------------");
+        System.out.println("DANH SÁCH CÁC ĐỈNH ( MÔN ) VÀ NHỮNG ĐỈNH KHÔNG ĐƯỢC KỀ ĐỈNH ( MÔN ) ĐÓ CỦA ĐỒ THỊ");
+            adjustList.entrySet().stream().forEach(entry -> {
+                System.out.print(entry.getKey().getName()+" --> ");
+                entry.getValue().stream().forEach(vertex -> System.out.print(vertex.getName()+"  "));
+                System.out.println();
+            });
 
     }
 
-
-
-
-
     public void coloring(){
-
-
-
-
-
 
         // print adjust List
 
         // in ra hashTable có key là đỉnh và value là danh sách các đỉnh không được liền kề của đỉnh đó
 
         this.adjustList.entrySet().stream().forEach(entryVetex -> {
-            System.out.print(entryVetex.getKey()+"--");
+//            System.out.print(entryVetex.getKey()+"--");
             List<Vertex> conflictVertices = entryVetex.getValue();
-            conflictVertices.stream().forEach(vertex -> System.out.print(vertex +" "));
-            System.out.println();
+//            conflictVertices.stream().forEach(vertex -> System.out.print(vertex +" "));
+//            System.out.println();
 
         });
 
+//        adjustList.entrySet()
 
         int count = 1 ;
 
@@ -117,8 +108,6 @@ public class Graph {
         Vertex firstNotColoringVertex = null ;
 
         Set<Vertex> notColoringSecond = null;
-
-
 
         while(isColored.entrySet().stream().filter(entryVetex -> entryVetex.getValue() == true).count() != totalOfSubject ){
 
@@ -164,14 +153,14 @@ public class Graph {
 
         }
     }
-
     // In kết quả ra ngoài màn hình console của IDE
     public void printResult(){
+        System.out.println("--------------------------");
         System.out.println("KẾT QUẢ SẮP XẾP LỊCH THI");
-        System.out.println("---Kì thi---");
+        System.out.println("Đợt thi --- Các môn");
         this.result.entrySet().stream().forEach(entry -> {
-            System.out.print(entry.getKey() + " -----");
-            entry.getValue().stream().forEach(entryVertex -> System.out.print(entryVertex +"  "));
+            System.out.print("      "+entry.getKey() + " --- ");
+            entry.getValue().stream().forEach(entryVertex -> System.out.print(entryVertex.getName() +"  "));
             System.out.println();
         });
     }
@@ -203,5 +192,4 @@ public class Graph {
 
             return notConflict;
     }
-
 }
