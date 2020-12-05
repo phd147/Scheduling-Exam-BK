@@ -1,19 +1,20 @@
 package App;
 
-import javax.management.NotificationEmitter;
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Graph {
-    private Map<Integer, List<Vetex>> result = new HashMap<>();
-    private Map<Vetex,Boolean> isColored = new HashMap<>() ;
-    private Map<Vetex,List<Vetex>> adjustList = new HashMap<>() ;
+
+    private Map<Integer, List<Vertex>> result = new HashMap<>();
+    private Map<Vertex,Boolean> isColored = new HashMap<>() ;
+    private Map<Vertex,List<Vertex>> adjustList = new HashMap<>() ;
     private int totalOfSubject  ;
-    private Map<String, Vetex> mapAllVetex = new HashMap<>() ;
+    private Map<String, Vertex> mapAllVetex = new HashMap<>() ;
+
+    static  int studentCount = 0 ;
+    static int subjectCount = 0 ;
 
     public Graph() throws IOException {
         System.out.println("default constructor");
@@ -22,37 +23,30 @@ public class Graph {
 
 
 
-
+    // Khởi tạo đồ thi Graph bằng cách đọc file và xử lí logic
     public void initGraphFromTheFiles(String studentPath,String allSubjectsPath) throws IOException {
 
 
 
-
-           // init Vetex
-//            Set<String> allSubjects = new HashSet<>();
-//            students.stream().forEach(student -> {
-//                allSubjects.addAll(student.getSubjects());
-//            });
-//
-//            allSubjects.stream().forEach(subject -> allVetexs.add(new Vetex(subject)));
-
+        // Đọc file và  Set giá trị cho thuộc tính các môn theo cấu trúc dữ liệu hashTable ( cụ thể ở đây là HashMap trong java )
 
         Path subjectsPath = Paths.get(allSubjectsPath);
         List<String> subjectLines = Files.readAllLines(subjectsPath);
 
 
-
         subjectLines.stream().forEach(subjectLine -> {
-//
-          mapAllVetex.put(subjectLine,new Vetex(subjectLine));
+            if(subjectCount >=1){
+                mapAllVetex.put(subjectLine,new Vertex(subjectLine));
+            };
+            subjectCount ++ ;
 
         });
 
-        // init total
+        // Set giá trị cho thuộc tính tổng các đỉnh (MÔN)
         totalOfSubject = mapAllVetex.size();
 
 
-        // init all Student
+        // Đọc file và  Set giá trị cho thuộc tính thông tin sinh viên theo cấu trúc dữ liệu đối tượng Student
 
         Path stdPath = Paths.get(studentPath);
         List<String> studentsLines = Files.readAllLines(stdPath);
@@ -60,31 +54,31 @@ public class Graph {
 
 
         studentsLines.stream().forEach(line -> {
-            String name = line.split(":")[0];
-            List<String> subjects = Arrays.asList(line.split(":")[1].split(","));
-            List<Vetex> subjectOfStudent = new ArrayList<>();
-            subjects.stream().forEach(str -> subjectOfStudent.add(mapAllVetex.get(str)));
-            students.add(new Student(name,subjectOfStudent));
+            if(studentCount >= 1){
+                System.out.println(line);
+                String name = line.split(":")[0];
+                List<String> subjects = Arrays.asList(line.split(":")[1].split(","));
+                List<Vertex> subjectOfStudent = new ArrayList<>();
+                subjects.stream().forEach(str -> subjectOfStudent.add(mapAllVetex.get(str)));
+                students.add(new Student(name,subjectOfStudent));
+            }
+            studentCount ++ ;
+
         });
 //        students.stream().forEach(student -> System.out.println(student));
 
 
-            this.isColored = this.mapAllVetex.entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toMap(vetex -> vetex , vetex -> false));
+            this.isColored = this.mapAllVetex.entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toMap(vertex -> vertex, vertex -> false));
 
 
-            // init adjustList
+            // Khởi tạo thuộc tính bảng băm hash table ( cụ thể ở đây là hashMap<>()) cho đồ thị , có key là đỉnh và value là danh sách các đỉnh không được kề đỉnh đó
+            mapAllVetex.values().stream().forEach(vertex -> {
+                System.out.println(vertex);
+                Set<Vertex> conflictVertices = new HashSet<>();
+                students.stream().filter(student -> student.getSubjects().contains(vertex)).forEach(student -> conflictVertices.addAll(student.getSubjects()));
+                List<Vertex> incommingCoflict = new ArrayList<>(conflictVertices).stream().filter(vertexCurr -> !vertexCurr.equals(vertex)).collect(Collectors.toList());
+                adjustList.put(vertex,incommingCoflict);
 
-            mapAllVetex.values().stream().forEach(vetex -> {
-                System.out.println(vetex);
-                Set<Vetex> conflictVetex = new HashSet<>();
-                students.stream().filter(student -> {
-//                   System.out.println(student);
-                   return student.getSubjects().contains(vetex);
-               }).forEach(student -> conflictVetex.addAll(student.getSubjects()));
-                List<Vetex> incommingCoflict = new ArrayList<>(conflictVetex).stream().filter(vetexCurr -> !vetexCurr.equals(vetex)).collect(Collectors.toList());
-                adjustList.put(vetex,incommingCoflict);
-//                System.out.print(vetex+" --> " +incommingCoflict);
-//                System.out.println();
             });
 
 
@@ -96,15 +90,19 @@ public class Graph {
 
     public void coloring(){
 
-//
+
+
 
 
 
         // print adjust List
+
+        // in ra hashTable có key là đỉnh và value là danh sách các đỉnh không được liền kề của đỉnh đó
+
         this.adjustList.entrySet().stream().forEach(entryVetex -> {
             System.out.print(entryVetex.getKey()+"--");
-            List<Vetex> conflictVetex = entryVetex.getValue();
-            conflictVetex.stream().forEach( vetex -> System.out.print(vetex+" "));
+            List<Vertex> conflictVertices = entryVetex.getValue();
+            conflictVertices.stream().forEach(vertex -> System.out.print(vertex +" "));
             System.out.println();
 
         });
@@ -112,93 +110,96 @@ public class Graph {
 
         int count = 1 ;
 
-        List<Vetex> currentVetex = new ArrayList<>();
+        List<Vertex> currentVertices = new ArrayList<>();
 
-        List<Vetex> NotColoring = null ;
-        Set<Vetex> NotColoringSet = null ;
-        Vetex firstNotColoringVetex = null ;
+        List<Vertex> NotColoring = null ;
+        Set<Vertex> NotColoringSet = null ;
+        Vertex firstNotColoringVertex = null ;
 
-        Set<Vetex> notColoringSecond = null;
+        Set<Vertex> notColoringSecond = null;
 
 
 
         while(isColored.entrySet().stream().filter(entryVetex -> entryVetex.getValue() == true).count() != totalOfSubject ){
-            System.out.println("con dinh chua to");
+
+
+            // tìm danh sách những đỉnh chưa tô màu
              NotColoring = isColored.entrySet().stream().filter(entryVetex -> entryVetex.getValue() != true).map(entryVetex -> entryVetex.getKey()).collect(Collectors.toList());
-             NotColoring  = NotColoring.stream().sorted(Vetex::compareTo).collect(Collectors.toList());
-//             NotColoringSet = new TreeSet<>(NotColoring);
-            System.out.print("not coloring set");
-//             NotColoringSet.stream().forEach(t -> System.out.print(t));
-            System.out.println();
+             // Sắp xếp những đỉnh chưa tô màu đó theo thứ tự tăng dần theo bảng chữ cái alpha belta
+             NotColoring  = NotColoring.stream().sorted(Vertex::compareTo).collect(Collectors.toList());
 
-             firstNotColoringVetex = NotColoring.get(0);
-            System.out.println("current Vetex " +firstNotColoringVetex);
-            // current list Vetex
-            currentVetex.add(firstNotColoringVetex);
+            // lấy phần tử đầu tiên của danh sách trên ra
+             firstNotColoringVertex = NotColoring.get(0);
 
-            // add zo da to mau
-            isColored.put(firstNotColoringVetex,true);
+             //add vào danh sách các đỉnh thi kì thi thứ count
+            currentVertices.add(firstNotColoringVertex);
 
-            // add zo result
-            result.put(count,currentVetex);
+            // add đỉnh đó vào danh sách đã tô màu
+            isColored.put(firstNotColoringVertex,true);
 
-            // tim cai chua to mau
+            // add  key là count ( kì thi ) và value là danh sách kì thi thứ count tạm thời vào bảng băm hashTable kết quả
+            result.put(count, currentVertices);
+
+            // Ta tìm những đỉnh chưa tô màu tiếp theo
 
             NotColoring = isColored.entrySet().stream().filter(entryVetex -> entryVetex.getValue() != true).map(entryVetex -> entryVetex.getKey()).collect(Collectors.toList());
             NotColoringSet = new TreeSet<>(NotColoring);
 
-            Iterator<Vetex> itr = NotColoringSet.iterator();
+            Iterator<Vertex> itr = NotColoringSet.iterator();
             while(itr.hasNext()){
-                Vetex incomingVetex = itr.next();
-               if(isConflict(adjustList.get(incomingVetex),currentVetex)){
-                   currentVetex.add(incomingVetex);
-                   isColored.put(incomingVetex,true);
+                Vertex incomingVertex = itr.next();
+               if(isConflict(adjustList.get(incomingVertex), currentVertices)){
+                   currentVertices.add(incomingVertex);
+                   isColored.put(incomingVertex,true);
 
                 }
             }
-            result.remove(count);
-            result.put(count,new ArrayList<>(currentVetex));
-            currentVetex = new ArrayList<>() ;
+            result.put(count,new ArrayList<>(currentVertices));
 
+            // reset lại danh sách thi kì ni là rỗng
+            currentVertices = new ArrayList<>() ;
+
+            // biến count tăng lên 1 đơn vị, có nghĩa là sang đợt thi mới
             count ++ ;
 
         }
     }
 
-
+    // In kết quả ra ngoài màn hình console của IDE
     public void printResult(){
-
+        System.out.println("KẾT QUẢ SẮP XẾP LỊCH THI");
+        System.out.println("---Kì thi---");
         this.result.entrySet().stream().forEach(entry -> {
             System.out.print(entry.getKey() + " -----");
-            entry.getValue().stream().forEach(entryVetex -> System.out.print(entryVetex+"  "));
+            entry.getValue().stream().forEach(entryVertex -> System.out.print(entryVertex +"  "));
             System.out.println();
         });
     }
 
-
+    // Lưu kết quả vào file
     public void saveResultIntoFile(String fileSave) throws IOException {
         List<String> resultSave = new ArrayList<>();
 
         this.result.entrySet().stream().forEach(entry -> {
             StringBuilder sb = new StringBuilder();
             sb.append(entry.getKey() + " -----");
-            entry.getValue().stream().forEach(entryVetex -> sb.append(entryVetex+"  "));
+            entry.getValue().stream().forEach(entryVertex -> sb.append(entryVertex +"  "));
             resultSave.add(sb.toString());
         });
         Files.write(Paths.get(fileSave),resultSave, StandardOpenOption.APPEND);
     }
 
-
-    private boolean isConflict(List<Vetex> conflictOfVetex,List<Vetex> currentListVetex){
+    // Kiểm tra xem đỉnh hiện tại đang xét có kề các đỉnh trong kì thi đang xét hay không
+    private boolean isConflict(List<Vertex> conflictOfVertices, List<Vertex> currentListVertices){
             boolean notConflict = true ;
-            Map<Vetex,Vetex> currentMapVetex = currentListVetex.stream().collect(Collectors.toMap(vetex -> vetex, vetex -> vetex ));
-            for(int i = 0;i<conflictOfVetex.size(); i++){
-                if(currentMapVetex.get(conflictOfVetex.get(i)) != null){
+            Map<Vertex, Vertex> currentMapVetex = currentListVertices.stream().collect(Collectors.toMap(vertex -> vertex, vertex -> vertex));
+            for(int i = 0; i< conflictOfVertices.size(); i++){
+                if(currentMapVetex.get(conflictOfVertices.get(i)) != null){
                         notConflict = false ;
                         break ;
                 }
             }
-        System.out.println(notConflict);
+//        System.out.println(notConflict);
 
             return notConflict;
     }

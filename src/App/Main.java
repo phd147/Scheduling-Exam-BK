@@ -4,14 +4,25 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+<<<<<<< HEAD
         //  Khởi tạo một đồ thị
             Graph graph = new Graph();
             // khởi tạo các thuộc tính trong đồ thị như ( Tổng số các đỉnh(MÔN), danh sách các đỉnh(MÔN) của đồ thị , một bộ từ điển có key là đỉnh(MÔN), value là danh sách các đỉnh(MÔN) không được kề đỉnh(MÔN) đó )
             graph.initGraphFromTheFiles("aListSubjectOfStudent.txt","allSubject.txt");
 
             // Thực hiện thuật toán tô màu và lưu vào bộ từ điển gồm key là số đợt thi , value là danh sách các môn thi của dợt đó )
+=======
+            //  Khởi tạo một đồ thị
+            Graph graph = new Graph();
+            // Khởi tạo các thuộc tính trong đồ thị như ( Tổng số các đỉnh(MÔN), danh sách các đỉnh(MÔN) của đồ thị , một hashTable có key là đỉnh(MÔN) A, value là danh sách các đỉnh(MÔN) không được kề đỉnh(MÔN) A đó )
+            graph.initGraphFromTheFiles("aListSubjectOfStudent.txt","allSubject.txt");
+
+            // Thực hiện thuật toán tô màu và lưu key,value vào 1 hashtable gồm key là số đợt thi , value là danh sách các môn thi của dợt đó )
+>>>>>>> add docs and comments code
             graph.coloring();
+            // In kết quả ra ngoài màn hình console của IDE
             graph.printResult();
-            graph.saveResultIntoFile("FinalExam.txt");
+            // Lưu kết quả vào file FinalExamResult.txt
+            graph.saveResultIntoFile("FinalExamResult.txt");
     }
 }

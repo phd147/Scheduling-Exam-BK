@@ -4,12 +4,12 @@ import java.util.List;
 
 public class Student {
     private String name ;
-    private List<Vetex> subjects ;
+    private List<Vertex> subjects ;
 
     public Student(){
 
     };
-    public Student(String name,List<Vetex> subjects){
+    public Student(String name,List<Vertex> subjects){
         this.name = name;
         this.subjects = subjects;
     }
@@ -18,7 +18,7 @@ public class Student {
         return this.name;
     }
 
-    public List<Vetex> getSubjects(){
+    public List<Vertex> getSubjects(){
         return this.subjects;
     }
 

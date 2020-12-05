@@ -1,15 +1,13 @@
 package App;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
-public class Vetex implements Comparable<Vetex> {
+public class Vertex implements Comparable<Vertex> {
 
     private String name ;
 
-    public Vetex(){};
-    public Vetex(String name){this.name = name ;};
+    public Vertex(){};
+    public Vertex(String name){this.name = name ;};
 
 
     public String getName() {
@@ -18,7 +16,7 @@ public class Vetex implements Comparable<Vetex> {
 
 
     @Override
-    public int compareTo(Vetex o) {
+    public int compareTo(Vertex o) {
         return this.getName().compareTo(o.getName());
     }
 
@@ -26,8 +24,8 @@ public class Vetex implements Comparable<Vetex> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Vetex vetex = (Vetex) o;
-        return Objects.equals(name, vetex.name);
+        Vertex vertex = (Vertex) o;
+        return Objects.equals(name, vertex.name);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class Vetex implements Comparable<Vetex> {
 
     @Override
     public String toString() {
-        return "Vetex{" +
+        return "Vertex{" +
                 "name='" + name + '\'' +
                 '}';
     }
