@@ -96,34 +96,7 @@ public class Graph {
 
     public void coloring(){
 
-//        Vetex MATH101 = new Vetex("MATH101");
-//        Vetex CSE100 = new Vetex("CSE100");
-//        Vetex MATH259 = new Vetex("MATH259");
-//        Vetex BLAW203 = new Vetex("BLAW203");
-//        Vetex STAT253 = new Vetex("STAT253");
-//        Vetex HIST111 = new Vetex("HIST111");
 //
-//        isColored.put(MATH101,false);
-//        isColored.put(CSE100,false);
-//        isColored.put(MATH259,false);
-//        isColored.put(BLAW203,false);
-//        isColored.put(STAT253,false);
-//        isColored.put(HIST111,false);
-
-
-
-
-
-//        totalOfSubject = 6 ;
-
-//        adjustList.put(MATH101,List.of(BLAW203,HIST111,MATH259));
-//        adjustList.put(BLAW203,List.of(MATH101,STAT253,CSE100));
-//        adjustList.put(CSE100,List.of(MATH101,MATH259));
-//        adjustList.put(HIST111,List.of(CSE100,MATH101));
-//        adjustList.put(MATH259,List.of(CSE100,HIST111,MATH101,STAT253));
-//        adjustList.put(STAT253,List.of(HIST111,MATH259,BLAW203));
-
-
 
 
 
