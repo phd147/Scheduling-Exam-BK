@@ -168,11 +168,13 @@ public class Graph {
     // Lưu kết quả vào file
     public void saveResultIntoFile(String fileSave) throws IOException {
         List<String> resultSave = new ArrayList<>();
-
+        resultSave.add("--------------------------");
+        resultSave.add("KẾT QUẢ SẮP XẾP LỊCH THI");
+        resultSave.add("Đợt thi --- Các môn");
         this.result.entrySet().stream().forEach(entry -> {
             StringBuilder sb = new StringBuilder();
-            sb.append(entry.getKey() + " -----");
-            entry.getValue().stream().forEach(entryVertex -> sb.append(entryVertex +"  "));
+            sb.append("      "+entry.getKey() + " --- ");
+            entry.getValue().stream().forEach(entryVertex -> sb.append(entryVertex.getName() +"  "));
             resultSave.add(sb.toString());
         });
         Files.write(Paths.get(fileSave),resultSave, StandardOpenOption.APPEND);

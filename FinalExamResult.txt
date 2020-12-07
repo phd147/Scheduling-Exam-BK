@@ -1,6 +1,6 @@
-1 -----Vertex{name='AI'}  Vertex{name='GIAITICH'}  
-2 -----Vertex{name='HINHHOA'}  Vertex{name='JAVA'}  
-3 -----Vertex{name='KTMT'}  Vertex{name='TINDC'}  
-1 -----Vertex{name='AI'}  Vertex{name='GIAITICH'}  
-2 -----Vertex{name='HINHHOA'}  Vertex{name='JAVA'}  
-3 -----Vertex{name='KTMT'}  Vertex{name='TINDC'}  
+
+KẾT QUẢ SẮP XẾP LỊCH THI
+Đợt thi --- Các môn
+      1 --- AI  GIAITICH  
+      2 --- HINHHOA  JAVA  
+      3 --- KTMT  TINDC  
